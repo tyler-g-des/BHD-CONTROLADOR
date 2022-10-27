@@ -1,0 +1,34 @@
+resources:
+  repositories:
+  - repository: azure_templates
+    type: git
+    name: BHDL-DevOps/_git/azure_templates
+    ref: master
+
+trigger:
+  branches:
+    include:
+    - master
+    - develop
+
+variables:
+- name: SQdockerAgentPool
+  value: AKS_Agents
+- name: interesadosCopiaCorreo
+  value: $(Build.RequestedForEmail)
+- name: interesadosCorreo
+  value: $(Build.RequestedForEmail)
+- name: SQcodeSourcePath
+  value: ./src
+- name: SQcodeExclusionPath
+  value:
+- name: SQbinaryPath
+  value:
+- name: jdkversion
+  value: 11
+
+stages:
+- stage: Build
+  condition: or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.Reason'], 'Manual'))
+  jobs:
+  - template: jobs/azure/builds/Maven-build-to-Artifact.yml@azure_templates
